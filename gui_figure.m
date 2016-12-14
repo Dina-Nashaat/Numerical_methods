@@ -22,7 +22,7 @@ function varargout = gui_figure(varargin)
 
 % Edit the above text to modify the response to help gui_figure
 
-% Last Modified by GUIDE v2.5 13-Dec-2016 00:23:27
+% Last Modified by GUIDE v2.5 14-Dec-2016 20:51:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,7 +62,7 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 %% Edit aesethetic appearance of Equation Input Textbox
-jEdit = findjobj(handles.txt_eq)
+jEdit = findjobj(handles.txt_eq);
 lineColor = java.awt.Color(0,0,0);  
 thickness = 2;  % pixels
 newBorder = javax.swing.border.LineBorder(lineColor,thickness);
@@ -154,19 +154,32 @@ function menu_method_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from menu_method
 
 select_index = get(hObject, 'value');
-if select_index == 2    
+if (select_index == 2 || select_index == 3)
     set(handles.lbl_upper, 'Visible','on');
     set(handles.lbl_lower, 'Visible','on');
     set(handles.txt_upper, 'Visible', 'on');
-    set(handles.txt_lower, 'Visible', 'on');
-    
-elseif select_index == 5
+    set(handles.txt_lower, 'Visible', 'on');    
+    set(handles.lbl_upper, 'String', 'Upper Bound');
+    set(handles.lbl_lower, 'String', 'Lower Bound');
+elseif (select_index == 4 || select_index == 5) 
     set(handles.lbl_upper, 'Visible','on');
     set(handles.lbl_lower, 'Visible','off');
     set(handles.txt_upper, 'Visible', 'on');
     set(handles.txt_lower, 'Visible', 'off');
     set(handles.lbl_upper, 'String', 'Initial Root')
-    
+elseif (select_index == 6)
+    set(handles.lbl_upper, 'visible', 'on');
+    set(handles.lbl_upper, 'String', 'Initial Value 1');
+    set(handles.lbl_lower, 'String', 'Initial Value 2');
+    set(handles.lbl_upper, 'Visible','on');
+    set(handles.lbl_lower, 'Visible','on');
+    set(handles.txt_upper, 'Visible', 'on');
+    set(handles.txt_lower, 'Visible', 'on');    
+else
+    set(handles.lbl_upper, 'Visible','off');
+    set(handles.lbl_lower, 'Visible','off');
+    set(handles.txt_upper, 'Visible', 'off');
+    set(handles.txt_lower, 'Visible', 'off');  
 end
 
 
@@ -185,18 +198,18 @@ end
 
 
 
-function txt_tol_Callback(hObject, eventdata, handles)
-% hObject    handle to txt_tol (see GCBO)
+function txt_iter_Callback(hObject, eventdata, handles)
+% hObject    handle to txt_iter (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of txt_tol as text
-%        str2double(get(hObject,'String')) returns contents of txt_tol as a double
+% Hints: get(hObject,'String') returns contents of txt_iter as text
+%        str2double(get(hObject,'String')) returns contents of txt_iter as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function txt_tol_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to txt_tol (see GCBO)
+function txt_iter_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to txt_iter (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -258,6 +271,40 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+select_index = get(handles.menu_method, 'value');
+Message = 'Please select a suitable Numerical Method to find the root';
+root_1 = str2double(get(handles.txt_upper, 'String'));
+root_2 = str2double(get(handles.txt_lower, 'String'));
+funStr = get(handles.txt_eq, 'String');
+iterin = str2num(get(handles.txt_iter, 'String'));
+prec = str2double(get(handles.txt_prec, 'String'));
+table = handles.table_data;
+if isempty(iterin)
+    iterin = 50;
+end
+if isempty(prec)
+    prec = 0.0001;
+end
+
+if (select_index == 1)
+    msgbox(Message);
+elseif (select_index == 5) 
+    tic;
+    [x error iterout] = Newton_Raphson(root_1, funStr, iterin, prec);
+    elapsed_time = toc;
+    set(handles.table_data, 'ColumnName', {'Root', 'Precision'});
+    set(handles.table_data, 'Data', [x;error]');
+    set(handles.lbl_root, 'String', x(end));
+    set(handles.lbl_iter, 'String', iterout);
+    str = strcat(num2str(elapsed_time), ' sec');
+    if floor(elapsed_time) == 0 
+        str = strcat(num2str(elapsed_time*100), ' msec');
+    end
+    set(handles.lbl_time, 'String', str);
+else
+    msgbox(Message);
+end
+
 
 
 % --- Executes on button press in pushbutton2.
