@@ -169,8 +169,8 @@ elseif (select_index == 4 || select_index == 5)
     set(handles.lbl_upper, 'String', 'Initial Root')
 elseif (select_index == 6)
     set(handles.lbl_upper, 'visible', 'on');
-    set(handles.lbl_upper, 'String', 'Initial Value 1');
-    set(handles.lbl_lower, 'String', 'Initial Value 2');
+    set(handles.lbl_upper, 'String', 'Initial Value (x0)');
+    set(handles.lbl_lower, 'String', 'Initial Value (x1)');
     set(handles.lbl_upper, 'Visible','on');
     set(handles.lbl_lower, 'Visible','on');
     set(handles.txt_upper, 'Visible', 'on');
@@ -268,43 +268,61 @@ end
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
+
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 select_index = get(handles.menu_method, 'value');
 Message = 'Please select a suitable Numerical Method to find the root';
-root_1 = str2double(get(handles.txt_upper, 'String'));
-root_2 = str2double(get(handles.txt_lower, 'String'));
+root_u = str2double(get(handles.txt_upper, 'String'));
+root_l = str2double(get(handles.txt_lower, 'String'));
 funStr = get(handles.txt_eq, 'String');
-iterin = str2num(get(handles.txt_iter, 'String'));
-prec = str2double(get(handles.txt_prec, 'String'));
 table = handles.table_data;
+iterin = get(handles.txt_iter, 'String');
+prec = get(handles.txt_prec, 'String');
+set(handles.table_data, 'Data', NaN);
 if isempty(iterin)
     iterin = 50;
+else
+    iterin = str2num(iterin);
 end
 if isempty(prec)
     prec = 0.0001;
+else
+    prec = eval(prec);
 end
 
 if (select_index == 1)
     msgbox(Message);
-elseif (select_index == 5) 
+elseif (select_index == 3) %False Positioning
+    fn = matlabFunction(sym(funStr));
     tic;
-    [x error iterout] = Newton_Raphson(root_1, funStr, iterin, prec);
+    [x error iterout] = False_Position(fn, root_l, root_u, prec, iterin);
     elapsed_time = toc;
-    set(handles.table_data, 'ColumnName', {'Root', 'Precision'});
-    set(handles.table_data, 'Data', [x;error]');
-    set(handles.lbl_root, 'String', x(end));
-    set(handles.lbl_iter, 'String', iterout);
-    str = strcat(num2str(elapsed_time), ' sec');
-    if floor(elapsed_time) == 0 
-        str = strcat(num2str(elapsed_time*100), ' msec');
-    end
-    set(handles.lbl_time, 'String', str);
+elseif (select_index == 5) %Newton Raphson
+    fn = matlabFunction(sym(funStr));
+    tic;
+    [x error iterout] = Newton_Raphson(root_u, fn, iterin, prec);
+    elapsed_time = toc;
+elseif select_index == 6 %Secant
+    fn = matlabFunction(sym(funStr));
+    tic;
+    [x error iterout] = Secant(fn,root_u, root_l, prec, iterin);
+    elapsed_time = toc;
 else
     msgbox(Message);
 end
-
+    
+%Output to GUI
+set(handles.table_data, 'ColumnName', {'Root', 'Precision'});
+set(handles.table_data, 'Data', [x;error]');
+set(handles.lbl_root, 'String', x(end));
+set(handles.lbl_iter, 'String', iterout);
+str = strcat(num2str(elapsed_time), ' sec');
+if floor(elapsed_time) == 0 
+    str = strcat(num2str(elapsed_time*100), ' msec');
+end
+set(handles.lbl_time, 'String', str);
 
 
 % --- Executes on button press in pushbutton2.
