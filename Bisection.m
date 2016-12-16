@@ -17,11 +17,15 @@ elseif nargin < 5
     tolerance = 0.00001;
 end
 
-syms fn(x)
-fn(x) = eval(fnString);
+%syms fn(x)
+%fn(x) = eval(fnString);
+fn = sym(fnString);
 
-fx1 = fn(x1);
-fx2 = fn(x2);
+%fx1 = fn(x1);
+%fx2 = fn(x2);
+fx1 = subs(fn,x1);
+fx2 = subs(fn, x2);
+
 
 if fx1*fx2 > 0
     root = ('Error: The function has the same sign at the two given points');
@@ -35,7 +39,7 @@ else
        if i > 1
            error(i) = abs((root(i) - root(i-1))/root(i))*100;
        end
-       fx = fn(root(i));
+       fx = subs(fn, root(i));
        if fx == 0
            break;
        end

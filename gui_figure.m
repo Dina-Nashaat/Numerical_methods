@@ -294,6 +294,11 @@ end
 
 if (select_index == 1)
     msgbox(Message);
+elseif select_index == 2
+    fn = matlabFunction(sym(funStr));
+    tic;
+    [x, error, iterout] = Bisection(fn, root_l, root_u, iterin, prec);
+    elapsed_time = toc;
 elseif (select_index == 3) %False Positioning
     fn = matlabFunction(sym(funStr));
     tic;
