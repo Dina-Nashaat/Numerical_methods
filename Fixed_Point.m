@@ -1,26 +1,31 @@
-%% Fixed Point Method
+% Fixed Point Method
 
-function root = Fixed_Point(fnString, x0, iterations, tolerance)
+function [root, error, i] = Fixed_Point(gnString, x0, iterations, tolerance)
 
 if nargin < 3
     iterations = 50;
-    tolerance = 0.00001;
+    tolerance = 0.1;
 elseif nargin < 4
-    tolerance = 0.00001;
+    tolerance = 0.1;
 end
 
-syms fn(x)
-fn(x) = eval(fnString);
+syms gn(x)
+gn(x) = eval(gnString);
+root = zeros(1, iterations);
+error = zeros(1, iterations);
 
-root = fn(x0);
+root(1) = double(gn(x0));
+error(1) = abs((root(1) - x0)/root(1));
 
-for i = 1:iterations
-    if abs(x0-root) > tolerance
-        x0 = root;
-        root = fn(x0);
-    else
-        break;
-    end
+i = 1;
+while error(i) > tolerance && i < iterations
+    i = i + 1;
+    root(i) = double(gn(root(i-1)));
+    error(i) = abs((root(i) - root(i-1))/root(i));
 end
+
+root = root(1:i);
+error = error(1:i);
+error = error * 100;
 
 end
