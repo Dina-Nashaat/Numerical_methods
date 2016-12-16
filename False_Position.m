@@ -1,4 +1,4 @@
-function [ xr ] = False_Position( fn,xl,xu,es ) %The function , lower bound , upper bound , accuracy
+function [ error,i,xr ] = False_Position( fn,xl,xu,es,iter ) %The function , lower bound , upper bound , accuracy
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
     
@@ -29,8 +29,8 @@ grid on
 
 fprintf('   iter     x1     xr     xu      f(xr)     ea\n');
 
-while(error>es)
-    i=i+1;
+while(error>es && i<iter)
+    
     plot([xu xl],[fu fl],'r--')
     %pause
     %Remove the 'pause' comment for single step mode
@@ -46,7 +46,7 @@ while(error>es)
        fu = fr;
    end
    error = abs(fr);
-   
+   i=i+1;
 end
 
     
@@ -96,6 +96,7 @@ end
 %     %ea = abs((xr-xrold)/xr);
 %     ea = abs(fr);
 % end
+i=i-1;
 
 fprintf('the iteration number is %d\n',i);
 fprintf('the root of the function is %f\n',xr);

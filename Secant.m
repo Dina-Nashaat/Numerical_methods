@@ -1,4 +1,4 @@
-function [ xr ] = Secant( f,a,b,tol,iter ) %The function , x(i-1) , x(i) , tolerance , maximum iterations
+function [ error,i,xr ] = Secant( f,a,b,tol,iter ) %The function , x(i-1) , x(i) , tolerance , maximum iterations
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 tic;
