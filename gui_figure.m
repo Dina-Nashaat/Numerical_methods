@@ -304,6 +304,11 @@ elseif (select_index == 3) %False Positioning
     tic;
     [x error iterout] = False_Position(fn, root_l, root_u, prec, iterin);
     elapsed_time = toc;
+elseif select_index == 4 %Fixed Point
+    fn = matlabFunction(sym(funStr));
+    tic;
+    [x error iterout] = Fixed_Point(fn, root_u, iterin, prec);
+    elapsed_time = toc;
 elseif (select_index == 5) %Newton Raphson
     fn = matlabFunction(sym(funStr));
     tic;
