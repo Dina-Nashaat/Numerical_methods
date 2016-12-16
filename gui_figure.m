@@ -22,7 +22,7 @@ function varargout = gui_figure(varargin)
 
 % Edit the above text to modify the response to help gui_figure
 
-% Last Modified by GUIDE v2.5 14-Dec-2016 20:51:24
+% Last Modified by GUIDE v2.5 17-Dec-2016 00:03:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -335,3 +335,14 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[filename, path] = uigetfile('*.txt', 'Select the required text file');
+io_contents = fullfile(path, filename);
+text = fileread(io_contents);
+set(handles.txt_eq, 'String',text);
