@@ -28,7 +28,7 @@ fx2 = subs(fn, x2);
 
 
 if fx1*fx2 > 0
-    root = ('Error: The function has the same sign at the two given points');
+    msgbox('Error: The function has the same sign at the two given points');
 else
     n = ceil((log10(x2-x1)-log10(tolerance))/log10(2));
     n = min(iterations, n);

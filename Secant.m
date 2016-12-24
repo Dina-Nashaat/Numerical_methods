@@ -25,7 +25,7 @@ while(error(i)>tol && i<iter)
     c(i+1) = (a*f(b) - b*f(a))/(f(b) - f(a));
     %error(i+1) = abs(f(c(i+1)));
     error(i+1) = abs(((c(i+1) - c(i))/c(i+1)))*100;
-    i=i+1;
+        i=i+1;
 end
 fprintf('Number of Iterations = %3d \n',i);
 xr=c;

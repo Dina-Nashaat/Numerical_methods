@@ -22,7 +22,7 @@ function varargout = gui_figure(varargin)
 
 % Edit the above text to modify the response to help gui_figure
 
-% Last Modified by GUIDE v2.5 17-Dec-2016 00:03:14
+% Last Modified by GUIDE v2.5 24-Dec-2016 08:41:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -281,6 +281,7 @@ table = handles.table_data;
 iterin = get(handles.txt_iter, 'String');
 prec = get(handles.txt_prec, 'String');
 set(handles.table_data, 'Data', NaN);
+
 if isempty(iterin)
     iterin = 50;
 else
@@ -294,10 +295,10 @@ end
 
 if (select_index == 1)
     msgbox(Message);
-elseif select_index == 2
+elseif select_index == 2 %Bisection
     fn = matlabFunction(sym(funStr));
     tic;
-    [x, error, iterout] = Bisection(fn, root_l, root_u, iterin, prec);
+    [x, error, iterout] = Bisection(fn, root_l, root_u, iterin, prec);    
     elapsed_time = toc;
 elseif (select_index == 3) %False Positioning
     fn = matlabFunction(sym(funStr));
@@ -312,8 +313,18 @@ elseif select_index == 4 %Fixed Point
 elseif (select_index == 5) %Newton Raphson
     fn = matlabFunction(sym(funStr));
     tic;
-    [x error iterout] = Newton_Raphson(root_u, fn, iterin, prec);
+    [fx x error iterout] = Newton_Raphson(root_u, fn, iterin, prec);
     elapsed_time = toc;
+    
+    %PLOTTING
+    [y fx] = equify(x,fx);
+    f = figure('visible','off');
+    plot(y, fx);
+    hold on; 
+    handles.f = f;
+    str = strcat('Root = ', num2str(x(end)))
+    vline(x(end),'r',str);
+    guidata(hObject, handles)
 elseif select_index == 6 %Secant
     fn = matlabFunction(sym(funStr));
     tic;
@@ -335,12 +346,13 @@ end
 set(handles.lbl_time, 'String', str);
 
 
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on button press in btn_plot.
+function btn_plot_Callback(hObject, eventdata, handles)
+% hObject    handle to btn_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+f = handles.f;
+set(f, 'Visible', 'on')
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
@@ -351,3 +363,10 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 io_contents = fullfile(path, filename);
 text = fileread(io_contents);
 set(handles.txt_eq, 'String',text);
+
+
+% --- Executes on button press in pushbutton5.
+function pushbutton5_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
